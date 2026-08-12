@@ -1,286 +1,604 @@
 # 🌐 Website Delivery with Azure Front Door and Azure CDN
 
-A cloud computing project that demonstrates how to deliver a secure, scalable, and high-performance website using **Azure Front Door** and **Azure CDN**. This project showcases global traffic routing, content caching, HTTPS, and improved website performance by leveraging Microsoft Azure services.
+A cloud computing project that demonstrates how to deliver a secure, scalable, and high-performance website using **Azure Front Door** and **Azure CDN**. The project focuses on **global traffic routing, HTTPS, CDN/edge caching, compression, and high-performance website delivery** using Terraform.
 
 ---
 
-## 📖 Overview
+## 📌 Project Overview
 
-Modern web applications require fast, reliable, and secure content delivery for users across the globe. This project uses **Azure Front Door** as the global entry point for routing and load balancing, while **Azure CDN** caches static assets closer to users to reduce latency and improve performance.
+In this project, a static website is hosted in an **Azure Storage Account** using Static Website Hosting.
 
----
+**Azure Front Door** acts as the public entry point for users. It provides global edge delivery, HTTPS, caching, compression, and routing to the Azure Storage origin.
 
-## 🚀 Features
-
-- Global traffic routing with Azure Front Door
-- Static content acceleration using Azure CDN
-- Website hosting on Azure App Service
-- Static asset storage using Azure Blob Storage
-- HTTPS support
-- High availability and scalability
-- Optional Azure WAF integration for security
-- Monitoring with Azure Monitor and Application Insights
-
----
-
-## 🏗️ Architecture
+### Architecture
+## 📁 Project Structure
 
 ```text
-                    Users
-                      │
-                      ▼
-            Azure Front Door
-      (Global Load Balancer + WAF)
-                      │
-          ┌───────────┴───────────┐
-          │                       │
-          ▼                       ▼
- Azure App Service        Azure App Service
-   (Primary)                (Secondary)
-          │
-          ▼
- Azure Storage Account
- (Blob Storage - Static Files)
-          │
-          ▼
-        Azure CDN
-```
-
----
-
-## 🛠️ Azure Services Used
-
-- Azure Resource Group
-- Azure App Service
-- Azure Storage Account
-- Azure Blob Storage
-- Azure Front Door
-- Azure CDN
-- Azure Monitor
-- Application Insights
-- Azure WAF (Optional)
-- Azure DNS (Optional)
-
----
-
-## 📂 Project Structure
-
-```text
-Website-Delivery-with-Azure-Front-Door-and-Azure-CDN/
+azure-frontdoor-cdn/
 │
-├── README.md
-├── deployment-guide.md
-├── architecture.png
+├── main.tf
+├── variables.tf
+├── outputs.tf
+├── provider.tf
+│
 ├── website/
 │   ├── index.html
-│   ├── style.css
-│   ├── script.js
-│   └── images/
+│   └── style.css
 │
-├── terraform/
-│   ├── provider.tf
-│   ├── main.tf
-│   ├── variables.tf
-│   └── outputs.tf
+├── scripts/
+│   ├── deploy.sh
+│   └── destroy.sh
 │
-└── screenshots/
-    ├── resource-group.png
-    ├── storage-account.png
-    ├── app-service.png
-    ├── front-door.png
-    ├── cdn-profile.png
-    └── final-output.png
+└── README.md
 ```
 
 ---
 
-## ⚙️ Deployment Steps
+## 🔄 How the Project Works
 
-### 1. Create a Resource Group
+### 1. User requests the website
+
+A user opens the Azure Front Door URL:
+
+```text
+https://<frontdoor-endpoint>.azurefd.net
+```
+
+### 2. Request reaches Azure Front Door
+
+Azure Front Door receives the request at Microsoft's edge network.
+
+### 3. Front Door checks its cache
+
+If the requested content is available at the edge, Front Door can serve the cached content without contacting the origin.
+
+### 4. Request is forwarded to Azure Storage
+
+If the content isn't available from cache, Front Door forwards the request to the configured Storage static website origin.
+
+### 5. Azure Storage returns the website
+
+Azure Storage returns:
+
+```text
+index.html
+style.css
+```
+
+### 6. Front Door delivers the response
+
+The content is returned to the user through Front Door.
+
+---
+
+# 🚀 Prerequisites
+
+Before deploying this project, install:
+
+### Azure CLI
+
+Verify:
 
 ```bash
-RG-WebsiteDelivery
+az --version
+```
+
+### Terraform
+
+Verify:
+
+```bash
+terraform version
+```
+
+### Azure subscription
+
+You need an active Azure subscription.
+
+---
+
+# 🔐 Azure Login
+
+Login to Azure:
+
+```bash
+az login
+```
+
+Check the current subscription:
+
+```bash
+az account show
+```
+
+If you have multiple subscriptions:
+
+```bash
+az account list --output table
+```
+
+Select your subscription:
+
+```bash
+az account set --subscription "YOUR_SUBSCRIPTION_NAME"
 ```
 
 ---
 
-### 2. Create a Storage Account
+# ⚙️ Configuration
 
-- Enable **Static Website Hosting**
-- Upload:
-  - index.html
-  - style.css
-  - script.js
-  - images/
+Open:
 
----
-
-### 3. Create an Azure App Service
-
-Deploy the website to Azure App Service.
-
----
-
-### 4. Create an Azure CDN Profile
-
-- Create a CDN Profile
-- Create a CDN Endpoint
-- Connect the endpoint to the Storage Account
-
----
-
-### 5. Create Azure Front Door
-
-Configure:
-
-- Backend Pool
-- Routing Rules
-- Health Probes
-- HTTPS
-
----
-
-### 6. Configure Custom Domain (Optional)
-
-Example:
-
-```
-www.example.com
+```text
+variables.tf
 ```
 
-Enable HTTPS using managed certificates.
+Update the Storage Account name if necessary:
+
+```hcl
+variable "storage_account_name" {
+  description = "Globally unique Storage Account name"
+  type        = string
+  default     = "frontdoorcdnwebsite01"
+}
+```
+
+Azure Storage Account names must be globally unique.
+
+For example:
+
+```hcl
+default = "frontdoorcdnwebsite12345"
+```
 
 ---
 
-### 7. Enable Azure WAF (Optional)
+# 📦 Terraform Deployment
 
-Protect the application against:
+Navigate to the project directory:
 
-- SQL Injection
-- Cross-Site Scripting (XSS)
-- Malicious Bots
-- Common Web Attacks
+```bash
+cd azure-frontdoor-cdn
+```
+
+Initialize Terraform:
+
+```bash
+terraform init
+```
+
+Validate the configuration:
+
+```bash
+terraform validate
+```
+
+Format the Terraform files:
+
+```bash
+terraform fmt
+```
+
+Create a deployment plan:
+
+```bash
+terraform plan
+```
+
+Apply the infrastructure:
+
+```bash
+terraform apply
+```
+
+Type:
+
+```text
+yes
+```
+
+when Terraform asks for confirmation.
 
 ---
 
-### 8. Enable Monitoring
+# 🚀 Using the Deployment Script
 
-Configure:
+You can also use the included deployment script:
 
-- Azure Monitor
-- Application Insights
-- Log Analytics
+```bash
+chmod +x scripts/*.sh
+```
+
+Then:
+
+```bash
+./scripts/deploy.sh
+```
+
+The script performs:
+
+```text
+Terraform Init
+      ↓
+Terraform Validate
+      ↓
+Terraform Format
+      ↓
+Terraform Plan
+      ↓
+Terraform Apply
+```
 
 ---
 
-## 📊 Workflow
+# 🌐 Get the Website URL
+
+After deployment, run:
+
+```bash
+terraform output
+```
+
+You should see outputs similar to:
+
+```text
+frontdoor_url = "https://fd-cdn-endpoint-xxxxx.z01.azurefd.net"
+storage_website_url = "https://frontdoorcdnwebsite01.z13.web.core.windows.net/"
+```
+
+The recommended URL for users is:
+
+```bash
+terraform output frontdoor_url
+```
+
+Open the resulting URL in your browser.
+
+---
+
+# 🧪 Testing
+
+## Test 1 — Test the Storage Website
+
+Get the Storage website URL:
+
+```bash
+terraform output storage_website_url
+```
+
+Open it in a browser.
+
+The website should display the project page.
+
+---
+
+## Test 2 — Test Azure Front Door
+
+Get the Front Door URL:
+
+```bash
+terraform output frontdoor_url
+```
+
+Open it in your browser.
+
+The request should flow through:
 
 ```text
 User
- │
- ▼
+ ↓
 Azure Front Door
- │
- ▼
-Azure App Service
- │
- ├──────────────► Dynamic Content
- │
- ▼
-Azure Storage
- │
- ▼
-Azure CDN
- │
- ▼
-Cached Static Content
+ ↓
+Storage Origin
+ ↓
+Static Website
 ```
 
 ---
 
-## 💡 Benefits
+## Test 3 — Test HTTPS
 
-- Faster website loading
-- Reduced latency
-- Improved user experience
-- Secure HTTPS communication
-- Global content delivery
-- Automatic scalability
-- High availability
-- Better application performance
+Try accessing the Front Door endpoint using HTTP:
 
----
+```text
+http://<frontdoor-hostname>
+```
 
-## 📷 Screenshots
+The configuration is designed to redirect HTTP traffic to:
 
-Include screenshots such as:
-
-- Azure Resource Group
-- Storage Account
-- Blob Storage
-- Azure App Service
-- Azure Front Door
-- Azure CDN
-- Website Running Successfully
+```text
+https://<frontdoor-hostname>
+```
 
 ---
 
-## 📚 Learning Outcomes
+## Test 4 — Check HTTP Headers
 
-This project demonstrates:
+Use:
 
-- Azure Front Door configuration
-- Azure CDN deployment
-- Website hosting on Azure
-- Blob Storage integration
-- Traffic routing
-- Static content caching
-- HTTPS configuration
-- Performance optimization
-- Monitoring cloud applications
+```bash
+curl -I https://<frontdoor-hostname>
+```
+
+This allows you to inspect response headers and demonstrate that the request is being served through the Front Door endpoint.
 
 ---
 
-## 🔮 Future Improvements
+# 🔍 Azure Front Door Resources
 
-- CI/CD using GitHub Actions
-- Infrastructure as Code using Terraform or Bicep
-- Multi-region deployment
-- Custom domain integration
-- Azure Key Vault integration
-- Automated scaling
-- Monitoring dashboards and alerts
+The Terraform configuration creates:
+
+```text
+Resource Group
+      |
+      +-- Storage Account
+      |      |
+      |      +-- Static Website
+      |             |
+      |             +-- index.html
+      |             +-- style.css
+      |
+      +-- Front Door Profile
+             |
+             +-- Front Door Endpoint
+             |
+             +-- Origin Group
+             |
+             +-- Storage Origin
+             |
+             +-- Route
+```
 
 ---
 
-## 👨‍💻 Technologies Used
+# 🔒 Security Features
 
-- HTML5
-- CSS3
-- JavaScript
-- Microsoft Azure
-- Azure Front Door
-- Azure CDN
-- Azure App Service
-- Azure Storage
-- Terraform (Optional)
+This project includes several basic security and performance features.
+
+### HTTPS
+
+Front Door supports HTTPS for the website endpoint.
+
+### HTTP Redirect
+
+HTTP traffic is redirected to HTTPS.
+
+### TLS
+
+The Storage Account is configured to require:
+
+```text
+TLS 1.2
+```
+
+### Edge Delivery
+
+Front Door provides an edge entry point for users instead of exposing the Storage website URL as the primary application URL.
+
+---
+
+# ⚡ Performance Features
+
+The project demonstrates:
+
+### CDN / Edge Caching
+
+Static content can be cached closer to users.
+
+### Compression
+
+Compression is enabled for common web content such as:
+
+```text
+HTML
+CSS
+JavaScript
+JSON
+SVG
+```
+
+### Global Delivery
+
+Azure Front Door uses Microsoft's global edge network to serve users from locations closer to them.
+
+---
+
+# 📊 Monitoring and Troubleshooting
+
+Check Terraform resources:
+
+```bash
+terraform state list
+```
+
+Check Front Door profile:
+
+```bash
+az afd profile list --output table
+```
+
+Check Front Door endpoints:
+
+```bash
+az afd endpoint list \
+  --resource-group rg-frontdoor-cdn-demo \
+  --profile-name fd-cdn-demo \
+  --output table
+```
+
+Check Front Door routes:
+
+```bash
+az afd route list \
+  --resource-group rg-frontdoor-cdn-demo \
+  --profile-name fd-cdn-demo \
+  --endpoint-name fd-cdn-endpoint \
+  --output table
+```
+
+Check Storage blobs:
+
+```bash
+az storage blob list \
+  --account-name YOUR_STORAGE_ACCOUNT \
+  --container-name '$web' \
+  --auth-mode login \
+  --output table
+```
+
+---
+
+# ⚠️ Troubleshooting
+
+## Front Door shows "Page not found"
+
+If you receive:
+
+```text
+Page not found
+
+Oops! We weren't able to find your Azure Front Door Service configuration.
+```
+
+First check the Front Door endpoint:
+
+```bash
+az afd endpoint list \
+  --resource-group rg-frontdoor-cdn-demo \
+  --profile-name fd-cdn-demo \
+  --output table
+```
+
+Then check the route:
+
+```bash
+az afd route list \
+  --resource-group rg-frontdoor-cdn-demo \
+  --profile-name fd-cdn-demo \
+  --endpoint-name fd-cdn-endpoint \
+  --output table
+```
+
+Also verify that the Storage static website works directly:
+
+```bash
+terraform output storage_website_url
+```
+
+Azure Front Door configuration can take some time to propagate after deployment.
+
+---
+
+# 🧹 Destroy the Infrastructure
+
+To remove all resources created by Terraform:
+
+```bash
+terraform destroy
+```
+
+Or use:
+
+```bash
+./scripts/destroy.sh
+```
+
+⚠️ **Warning:** This deletes the Azure resources created by this Terraform project.
+
+---
+
+# 💰 Cost Consideration
+
+Azure Front Door and Azure Storage can incur charges depending on usage.
+
+This project is intended as a **learning/demo environment**, so destroy the resources when you are finished:
+
+```bash
+terraform destroy
+```
+
+Always check current Azure pricing before deploying production workloads.
+
+---
+
+# 📚 What I Learned
+
+Through this project, I learned:
+
+* Azure Storage Static Website Hosting
+* Azure Front Door
+* CDN and edge caching concepts
+* Global traffic routing
+* Origin and origin groups
+* Health probes
+* HTTPS and HTTP redirects
+* Terraform Infrastructure as Code
+* Azure CLI
+* Static website deployment
+* Basic cloud performance optimization
+* Troubleshooting Azure Front Door
+
+---
+
+# 🎤 Interview Explanation
+
+**Question: What did you build?**
+
+> I built a static website delivery solution using Azure Storage and Azure Front Door. The website is hosted in Azure Storage, while Azure Front Door acts as the global entry point and edge delivery layer. I configured an origin group pointing to the Storage static website, HTTPS redirection, caching, compression, and health probes. The entire infrastructure is deployed using Terraform.
+
+**Question: Why use Azure Front Door?**
+
+> Azure Front Door provides global Layer 7 traffic routing and edge delivery. It can improve application performance by serving content from edge locations closer to users and also provides features such as HTTPS, caching, health probes, and routing.
+
+**Question: Why use Azure Storage?**
+
+> Because this project contains a static website, Azure Storage Static Website Hosting provides a simple and cost-effective way to host HTML, CSS, JavaScript, and other static content.
+
+**Question: Why Terraform?**
+
+> Terraform allows me to define the Azure infrastructure as code. This makes the environment repeatable, version-controlled, and easier to deploy or destroy.
+
+---
+
+# ⭐ Future Improvements
+
+This project can be extended with:
+
+* [ ] Custom domain
+* [ ] Managed TLS certificate
+* [ ] Azure WAF
+* [ ] Web Application Firewall policies
+* [ ] Azure Monitor
+* [ ] Log Analytics
+* [ ] Front Door access logs
+* [ ] CI/CD with GitHub Actions
+* [ ] Multiple Storage origins
+* [ ] Multi-region architecture
+* [ ] Private Origin
+* [ ] Infrastructure modules
+* [ ] Automated testing
+
+---
+
+# 👨‍💻 Author
+
+**Cloud / DevOps Portfolio Project**
+
+Technologies:
+
+```text
+Azure
+Terraform
+Azure Front Door
+Azure Storage
+Azure CLI
+HTML
+CSS
+Bash
+```
 
 ---
 
 ## 📄 License
 
-This project is licensed under the MIT License.
-
----
-
-## 🙌 Acknowledgements
-
-- Microsoft Azure Documentation
-- Azure Front Door
-- Azure CDN
-- Azure App Service
-- Azure Storage
-
----
-
-⭐ If you found this project helpful, consider giving it a star on GitHub!
+This project is created for **educational and portfolio purposes**.
