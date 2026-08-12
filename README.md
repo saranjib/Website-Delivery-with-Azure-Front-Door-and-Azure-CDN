@@ -322,34 +322,6 @@ curl -I https://<frontdoor-hostname>
 
 This allows you to inspect response headers and demonstrate that the request is being served through the Front Door endpoint.
 
----
-
-# 🔍 Azure Front Door Resources
-
-The Terraform configuration creates:
-
-```text
-Resource Group
-      |
-      +-- Storage Account
-      |      |
-      |      +-- Static Website
-      |             |
-      |             +-- index.html
-      |             +-- style.css
-      |
-      +-- Front Door Profile
-             |
-             +-- Front Door Endpoint
-             |
-             +-- Origin Group
-             |
-             +-- Storage Origin
-             |
-             +-- Route
-```
-
----
 
 # 🔒 Security Features
 
@@ -367,9 +339,6 @@ HTTP traffic is redirected to HTTPS.
 
 The Storage Account is configured to require:
 
-```text
-TLS 1.2
-```
 
 ### Edge Delivery
 
@@ -421,8 +390,8 @@ Check Front Door endpoints:
 
 ```bash
 az afd endpoint list \
-  --resource-group rg-frontdoor-cdn-demo \
-  --profile-name fd-cdn-demo \
+  --resource-group rg-frontdoor-cdn \
+  --profile-name fd-cdn \
   --output table
 ```
 
@@ -430,7 +399,7 @@ Check Front Door routes:
 
 ```bash
 az afd route list \
-  --resource-group rg-frontdoor-cdn-demo \
+  --resource-group rg-frontdoor-cdn \
   --profile-name fd-cdn-demo \
   --endpoint-name fd-cdn-endpoint \
   --output table
@@ -519,26 +488,6 @@ terraform destroy
 
 Always check current Azure pricing before deploying production workloads.
 
----
-
-# 📚 What I Learned
-
-Through this project, I learned:
-
-* Azure Storage Static Website Hosting
-* Azure Front Door
-* CDN and edge caching concepts
-* Global traffic routing
-* Origin and origin groups
-* Health probes
-* HTTPS and HTTP redirects
-* Terraform Infrastructure as Code
-* Azure CLI
-* Static website deployment
-* Basic cloud performance optimization
-* Troubleshooting Azure Front Door
-
----
 
 # 🎤 Interview Explanation
 
@@ -577,25 +526,6 @@ This project can be extended with:
 * [ ] Private Origin
 * [ ] Infrastructure modules
 * [ ] Automated testing
-
----
-
-# 👨‍💻 Author
-
-**Cloud / DevOps Portfolio Project**
-
-Technologies:
-
-```text
-Azure
-Terraform
-Azure Front Door
-Azure Storage
-Azure CLI
-HTML
-CSS
-Bash
-```
 
 ---
 
