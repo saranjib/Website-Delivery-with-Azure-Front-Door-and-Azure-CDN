@@ -4,13 +4,9 @@ A cloud computing project that demonstrates how to deliver a secure, scalable, a
 
 ---
 
-## 📌 Project Overview
-
-In this project, a static website is hosted in an **Azure Storage Account** using Static Website Hosting.
-
-**Azure Front Door** acts as the public entry point for users. It provides global edge delivery, HTTPS, caching, compression, and routing to the Azure Storage origin.
-
 ### Architecture
+
+
 ## 📁 Project Structure
 
 ```text
@@ -125,33 +121,6 @@ az account set --subscription "YOUR_SUBSCRIPTION_NAME"
 
 ---
 
-# ⚙️ Configuration
-
-Open:
-
-```text
-variables.tf
-```
-
-Update the Storage Account name if necessary:
-
-```hcl
-variable "storage_account_name" {
-  description = "Globally unique Storage Account name"
-  type        = string
-  default     = "frontdoorcdnwebsite01"
-}
-```
-
-Azure Storage Account names must be globally unique.
-
-For example:
-
-```hcl
-default = "frontdoorcdnwebsite12345"
-```
-
----
 
 # 📦 Terraform Deployment
 
