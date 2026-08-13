@@ -40,6 +40,15 @@ resource "azurerm_storage_blob" "website-blob" {
   content_type = "text/html"
 }
 
+# ---------------------------------------------------------
+# Enable Static Website Hosting
+# ---------------------------------------------------------
+
+resource "azurerm_storage_account_static_website" "static_site" {
+  storage_account_id = azurerm_storage_account.frontdoor-cdn-storage.id
+  index_document     = "index.html"
+  error_404_document = "404.html"
+}
 
 # ---------------------------------------------------------
 # Azure Front Door Profile
