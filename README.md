@@ -2,13 +2,14 @@
 
 A cloud computing project that demonstrates how to deliver a secure, scalable, and high-performance website using **Azure Front Door** and **Azure CDN**. The project focuses on **global traffic routing, HTTPS, CDN/edge caching, compression, and high-performance website delivery** using Terraform.
 
+
+
+## Architecture Diagram
+
+![Architecture](architecture.png)
+
+
 ---
-
-## Architecture
-![Architecture](Architecture.png)
-
-
-
 
 ## 📁 Project Structure
 
