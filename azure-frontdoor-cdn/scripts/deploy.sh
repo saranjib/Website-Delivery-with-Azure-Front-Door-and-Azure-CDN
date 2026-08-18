@@ -17,11 +17,6 @@ echo "Validating Terraform..."
 terraform validate
 
 echo ""
-echo "Formatting Terraform..."
-
-terraform fmt
-
-echo ""
 echo "Creating Terraform plan..."
 
 terraform plan
