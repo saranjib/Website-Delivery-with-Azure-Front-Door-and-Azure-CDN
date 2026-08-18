@@ -502,6 +502,3 @@ This project can be extended with:
 
 ---
 
-## 📄 License
-
-This project is created for **educational and portfolio purposes**.
